@@ -1,4 +1,4 @@
-{% set version = "0.1.1" %}
+{% set version = "0.2.0" %}
 
 package:
   name: vale-styles-readability
@@ -8,10 +8,10 @@ source:
   - folder: Readability
     fn: vale-Readability-0.1.1.zip
     url: https://github.com/errata-ai/Readability/releases/download/v{{ version }}/Readability.zip
-    sha256: fbe178b4b648c4d41bb72cee533addfd8f51cf0f3d1f0adfa08808770b418106
+    sha256: cf8790677bb2ef86458c1d1dbd6e646fd8063c0e9621f81141e5cd85e5e41f81
   - fn: LICENSE-vale-Readability-0.1.1
     url: https://raw.githubusercontent.com/errata-ai/Readability/v{{ version }}/LICENSE
-    sha256: 087db0d367d5a1495d23e40e7029bee65226b20907f60887f1b53fd8e8e54f35
+    sha256: aa431e1653f927cf92be0fcc77fe388b97780b5f0f541085e30c4abe626b1074
 
 build:
   noarch: generic
