@@ -1,10 +1,15 @@
+from __future__ import annotations
+
 import json
 import os
 import sys
 from pathlib import Path
-from subprocess import Popen, PIPE, call
+from subprocess import PIPE, Popen, call
 from textwrap import indent
-from typing import Generator
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
 
 os.environ.update(
     PYTHONIOENCODING="utf-8",
@@ -13,7 +18,7 @@ os.environ.update(
 
 from pytest import fixture
 
-UTF8 = dict(encoding="utf-8")
+UTF8: Any = dict(encoding="utf-8")
 VALE_NAME = "Readability"
 
 VALE_PATH = Path(sys.prefix) / "share/vale/styles"
@@ -42,25 +47,10 @@ DEFAULT_MD_WITH_AN_ISSUE = """
 
 MD_WITH_AN_ISSUE = {}
 
-MD_WITH_AN_ISSUE["Joblint"] = """
-# crush it bro
-"""
-
-MD_WITH_AN_ISSUE["write-good"] = """
-a chip off the old block
-"""
-
 MD_WITH_AN_ISSUE["Readability"] = (
     " ".join(["Buffalo", *[["chicken", "buffalo"][i % 2] for i in range(200)]]) + "."
 )
 
-MD_WITH_AN_ISSUE["alex"] = """
-ancient man
-"""
-
-MD_WITH_AN_ISSUE["proselint"] = """
-taking off momentarily
-"""
 
 def test_vale_path():
     rc, stdout, stderr = _run_vale_json("ls-dirs")
@@ -97,7 +87,7 @@ def test_style_finds_or_fixes_issue(a_markdown_file_with_issue: Path):
 
 
 @fixture
-def in_a_project(tmp_path: Path) -> Generator[Path, None, None]:
+def in_a_project(tmp_path: Path) -> Iterator[Path]:
     project = tmp_path / VALE_NAME
     project.mkdir()
     old_cwd = Path.cwd()
@@ -126,7 +116,7 @@ def a_markdown_file_with_issue(a_vale_ini: Path) -> Path:
 
 
 def _run_vale_json(*args: str):
-    args = ["vale", "--output=JSON", *args]
+    args = ("vale", "--output=JSON", *args)
     print(">>>", *args)
     proc = Popen(args, stdout=PIPE, stderr=PIPE, **UTF8)
     stdout, stderr = proc.communicate()

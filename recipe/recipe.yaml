@@ -1,0 +1,58 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/prefix-dev/recipe-format/main/schema.json
+schema_version: 1
+
+context:
+  version: "0.2.0"
+  slash: ${{ "/" if unix else "\\" }}
+  mkdir_p: ${{ "mkdir -p" if unix else "md" }}
+  prefix_env_var: ${{ "${PREFIX}" if unix else "%PREFIX%" }}
+  vale_styles_path: ${{ [prefix_env_var, "share", "vale", "styles"] | join(slash) }}
+
+package:
+  name: vale-styles-readability
+  version: ${{ version }}
+
+source:
+  url: https://github.com/errata-ai/Readability/releases/download/v${{ version }}/Readability.zip
+  sha256: cf8790677bb2ef86458c1d1dbd6e646fd8063c0e9621f81141e5cd85e5e41f81
+  target_directory: Readability
+
+build:
+  number: 0
+  noarch: generic
+  script:
+    env:
+      VALE_STYLES_PATH: ${{ vale_styles_path }}
+    content:
+      - ${{ mkdir_p }} "${{ vale_styles_path }}"
+      - echo "Packages = './Readability'" >> .vale.ini
+      - vale sync
+      - vale ls-config
+      - vale ls-dirs
+
+requirements:
+  host:
+    - vale
+  run:
+    - vale
+
+tests:
+  - package_contents:
+      strict: true
+      files:
+        - share/vale/styles/Readability/**
+  - requirements:
+      run:
+        - pytest
+    script:
+      file: run_test.py
+
+about:
+  license: MIT
+  license_file: Readability/LICENSE
+  summary: Readability rules for vale grammar and style checker
+  homepage: https://github.com/errata-ai/Readability
+
+extra:
+  recipe-maintainers:
+    - bollwyvl
