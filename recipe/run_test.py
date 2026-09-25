@@ -4,9 +4,9 @@ import json
 import os
 import sys
 from pathlib import Path
-from subprocess import Popen, PIPE, call
+from subprocess import PIPE, Popen, call
 from textwrap import indent
-from typing import Iter, Any, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
@@ -116,7 +116,7 @@ def a_markdown_file_with_issue(a_vale_ini: Path) -> Path:
 
 
 def _run_vale_json(*args: str):
-    args = ("vale", "--output=JSON", *args):
+    args = ("vale", "--output=JSON", *args)
     print(">>>", *args)
     proc = Popen(args, stdout=PIPE, stderr=PIPE, **UTF8)
     stdout, stderr = proc.communicate()

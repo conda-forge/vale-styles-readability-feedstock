@@ -4,8 +4,9 @@ schema_version: 1
 context:
   version: "0.2.0"
   slash: ${{ "/" if unix else "\\" }}
-  mkdir: ${{ "mkdir -p" if unix else "md" }}
-  vale_styles_path: ${{ [PREFIX, "share", "vale", "styles"] | join(slash) }}
+  mkdir_p: ${{ "mkdir -p" if unix else "md" }}
+  prefix_env_var: ${{ "${PREFIX}" if unix else "%PREFIX%" }}
+  vale_styles_path: ${{ [prefix_env_var, "share", "vale", "styles"] | join(slash) }}
 
 package:
   name: vale-styles-readability
@@ -23,7 +24,7 @@ build:
     env:
       VALE_STYLES_PATH: ${{ vale_styles_path }}
     content:
-      - ${{ md }} ${{ vale_styles_path }}
+      - ${{ mkdir_p }} "${{ vale_styles_path }}"
       - echo "Packages = './Readability'" >> .vale.ini
       - vale sync
       - vale ls-config
@@ -36,6 +37,10 @@ requirements:
     - vale
 
 tests:
+  - package_contents:
+      strict: true
+      files:
+        - share/vale/styles/Readability/**
   - requirements:
       run:
         - pytest
